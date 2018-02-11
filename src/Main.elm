@@ -1,19 +1,32 @@
 module Main exposing (..)
 
-import Html exposing (Html, text, div, h1, img)
-import Html.Attributes exposing (src)
+import Css exposing (..)
+import Html
+import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (css, href, src)
+import Header exposing (siteHeader)
+import Footer exposing (pageFooter)
+import Model exposing (Model)
+import User exposing (User)
+
+
+maybe : a -> Maybe a -> a
+maybe default maybeValue =
+    case maybeValue of
+        Nothing ->
+            default
+
+        Just value ->
+            value
+
 
 
 ---- MODEL ----
 
 
-type alias Model =
-    {}
-
-
 init : ( Model, Cmd Msg )
 init =
-    ( {}, Cmd.none )
+    ( Model <| Just <| User "Petar" "nekiavatar" User.Admin, Cmd.none )
 
 
 
@@ -33,11 +46,29 @@ update msg model =
 ---- VIEW ----
 
 
+dummyMainContent : Html msg
+dummyMainContent =
+    div [] [ text "Coming Soon!" ]
+
+
+viewLayout : Attribute msg
+viewLayout =
+    css
+        [ displayFlex
+        , flexDirection column
+        , justifyContent spaceBetween
+        , height <| vh 100
+        ]
+
+
 view : Model -> Html Msg
 view model =
-    div []
-        [ img [ src "/logo.svg" ] []
-        , h1 [] [ text "Your Elm App is working!" ]
+    div
+        [ viewLayout
+        ]
+        [ siteHeader model
+        , dummyMainContent
+        , pageFooter
         ]
 
 
@@ -48,7 +79,7 @@ view model =
 main : Program Never Model Msg
 main =
     Html.program
-        { view = view
+        { view = view >> toUnstyled
         , init = init
         , update = update
         , subscriptions = always Sub.none
